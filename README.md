@@ -11,18 +11,22 @@ Usage
 
 Install from JitPack repository:
 
-    repositories {
-        ...
-        maven { url "https://jitpack.io"  }
-    }
+```groovy
+repositories {
+    ...
+    maven { url "https://jitpack.io"  }
+}
 
-    dependencies {
-        compile 'moe.banana:toast-compat:<version>'
-    }
+dependencies {
+    compile 'moe.banana:toast-compat:<version>'
+}
+```
 
 And toast:
 
-    ToastCompat.makeText(context, "hello world!", Toast.LENGTH_SHORT).show();
+```java
+ToastCompat.makeText(context, "hello world!", Toast.LENGTH_SHORT).show();
+```
 
 License
 -------
