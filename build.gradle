@@ -64,14 +64,6 @@ artifacts {
   archives javadocJar
 }
 
-android.libraryVariants.all { variant ->
-  def name = variant.buildType.name
-  def task = project.tasks.create "jar${name.capitalize()}", Jar
-  task.dependsOn variant.javaCompile
-  task.from variant.javaCompile.destinationDir
-  artifacts.add('archives', task);
-}
-
 install {
   repositories.mavenInstaller {
     pom.project {
