@@ -1,0 +1,7 @@
+<resources>
+  <style name="ToastCompat"/>
+  <style name="ToastCompat.Animation">
+    <item name="android:windowEnterAnimation">@anim/toast_enter</item>
+    <item name="android:windowExitAnimation">@anim/toast_exit</item>
+  </style>
+</resources>
