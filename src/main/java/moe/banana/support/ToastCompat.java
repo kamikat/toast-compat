@@ -3,6 +3,9 @@ package moe.banana.support;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
 import android.support.v4.view.GravityCompat;
@@ -15,11 +18,10 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.TextView;
 
-import moe.banana.support.R;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.concurrent.TimeUnit;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ToastCompat {
 
@@ -29,6 +31,45 @@ public class ToastCompat {
     @IntDef({LENGTH_SHORT, LENGTH_LONG})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Duration {}
+
+    static final int MSG_ENQUEUE_TOAST = 0x01;
+    static final int MSG_CANCEL_TOAST = 0x02;
+    static final int MSG_NEXT_TOAST = 0x03;
+
+    static final Handler mHandler = new Handler(Looper.getMainLooper()) {
+
+        Queue<ToastCompat> mTQ = new LinkedList<>();
+        ToastCompat mCurrentToast;
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_ENQUEUE_TOAST:
+                    mTQ.add(((ToastCompat) msg.obj));
+                    if (mCurrentToast == null) {
+                        sendEmptyMessage(MSG_NEXT_TOAST);
+                    }
+                    break;
+                case MSG_CANCEL_TOAST:
+                    mTQ.remove(((ToastCompat) msg.obj));
+                    if (mCurrentToast == msg.obj) {
+                        removeMessages(MSG_NEXT_TOAST);
+                        sendEmptyMessage(MSG_NEXT_TOAST);
+                    }
+                    break;
+                case MSG_NEXT_TOAST:
+                    if (mCurrentToast != null) {
+                        mCurrentToast.mTN.handleHide();
+                    }
+                    mCurrentToast = mTQ.poll();
+                    if (mCurrentToast != null) {
+                        mCurrentToast.mTN.handleShow();
+                        sendEmptyMessageDelayed(MSG_NEXT_TOAST, mCurrentToast.mDuration == LENGTH_LONG ? 3500 : 2000);
+                    }
+                    break;
+            }
+        }
+    };
 
     final Context mContext;
     final TN mTN;
@@ -58,13 +99,7 @@ public class ToastCompat {
         }
         TN tn = mTN;
         tn.mNextView = mNextView;
-        mTN.handleShow();
-        mTN.mView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mTN.handleHide();
-            }
-        }, mDuration == LENGTH_LONG ? 3500 : 2000);
+        Message.obtain(mHandler, MSG_ENQUEUE_TOAST, this).sendToTarget();
     }
 
     /**
@@ -73,7 +108,7 @@ public class ToastCompat {
      * after the appropriate duration.
      */
     public void cancel() {
-        mTN.handleHide();
+        Message.obtain(mHandler, MSG_CANCEL_TOAST, this).sendToTarget();
     }
 
     /**
