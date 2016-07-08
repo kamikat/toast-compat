@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -263,7 +264,7 @@ public class ToastCompat {
                 mWM = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
                 // We can resolve the Gravity here by using the Locale for getting
                 // the layout direction
-                final int gravity = Gravity.getAbsoluteGravity(mGravity, ViewCompat.getLayoutDirection(mView));
+                final int gravity = GravityCompat.getAbsoluteGravity(mGravity, ViewCompat.getLayoutDirection(mView));
                 mParams.gravity = gravity;
                 if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.FILL_HORIZONTAL) {
                     mParams.horizontalWeight = 1.0f;
