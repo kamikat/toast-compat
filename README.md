@@ -9,11 +9,10 @@ Polyfills toast notification feature on Android &gt;= 4.2 (Jelly Bean)
 Usage
 -----
 
-Install from JitPack repository:
+Add dependency to gradle build script:
 
-```groovy
+```gradle
 repositories {
-    ...
     maven { url "https://jitpack.io"  }
 }
 
