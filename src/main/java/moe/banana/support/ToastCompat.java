@@ -226,7 +226,7 @@ public class ToastCompat {
      *                 {@link #LENGTH_LONG}
      *
      */
-    public static ToastCompat makeText(Context context, String text, @Duration int duration) {
+    public static ToastCompat makeText(Context context, CharSequence text, @Duration int duration) {
         ToastCompat result = new ToastCompat(context);
 
         LayoutInflater inflate = (LayoutInflater)
