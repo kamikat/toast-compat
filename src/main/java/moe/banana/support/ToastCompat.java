@@ -87,7 +87,16 @@ public class ToastCompat {
         mContext = context;
         mTN = new TN();
         mTN.mY = context.getResources().getDimensionPixelSize(Resources.getSystem().getIdentifier("toast_y_offset", "dimen", "android"));
-        mTN.mGravity = context.getResources().getInteger(Resources.getSystem().getIdentifier("config_toastDefaultGravity", "integer", "android"));
+        mTN.mGravity = compatGetToastDefaultGravity(context);
+    }
+
+    private int compatGetToastDefaultGravity(Context context) {
+        int toastDefaultGravityId = Resources.getSystem().getIdentifier("config_toastDefaultGravity", "integer", "android");
+        if (toastDefaultGravityId != 0) {
+            return context.getResources().getInteger(toastDefaultGravityId);
+        } else {
+            return Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
+        }
     }
 
     /**
