@@ -324,8 +324,13 @@ public class ToastCompat {
                 if (mView.getParent() != null) {
                     mWM.removeView(mView);
                 }
-                mWM.addView(mView, mParams);
-                trySendAccessibilityEvent();
+                try {
+                    mWM.addView(mView, mParams);
+                    trySendAccessibilityEvent();
+                } catch (Exception ignored) {
+                    // Can cause WindowManager.BadTokenException on MIUI
+                    // See https://github.com/kamikat/toast-compat/issues/3
+                }
             }
         }
 
